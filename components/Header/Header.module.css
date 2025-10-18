@@ -1,0 +1,138 @@
+.header {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  background: #1e293b;
+  border-bottom: 2px solid #00abe4;
+  padding: 0.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  list-style: none; /* прибрали крапки */
+  margin: 0;
+  padding: 0;
+}
+
+.navItemWithDropdown {
+  position: relative;
+}
+
+/* Посилання Home і кнопка Notes */
+.nav a,
+.navLink {
+  all: unset;
+  cursor: pointer;
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  font-weight: 500;
+  color: #cbd5e1;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.nav a::after,
+.navLink::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #0095c7;
+  border-radius: 12px;
+  transform: scaleX(0) scaleY(0);
+  transform-origin: top left;
+  transition: transform 0.4s ease;
+  pointer-events: none;
+}
+
+.nav a:hover::after,
+.navLink:hover::after,
+.nav a.active::after,
+.navLink.active::after {
+  transform: scaleX(1) scaleY(1);
+}
+
+.nav a:hover,
+.navLink:hover,
+.nav a.active,
+.navLink.active {
+  /* color: #0ea5e9; */
+  transform: translateY(-1px);
+}
+
+/* Випадаюче меню */
+.dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #1e293b;
+  border: 1px solid #00abe4;
+  border-radius: 12px;
+  list-style: none;
+  margin: 0.5rem 0 0 0;
+  padding: 0.5rem 0;
+  min-width: 140px;
+  z-index: 50;
+}
+
+.dropdown li {
+  margin: 0;
+}
+
+.dropdownLink {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #cbd5e1;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.dropdownLink:hover,
+.dropdownLink.active {
+  /* background: #00abe4; */
+  color: #fff;
+}
+
+.signIn {
+  padding: 12px 12px;
+  font-size: 15px;
+  font-weight: 600;
+  background: #00abe4;
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 171, 228, 0.3);
+}
+
+.signIn:hover {
+  background: #0095c7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 171, 228, 0.4);
+}

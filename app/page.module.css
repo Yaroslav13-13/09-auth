@@ -1,0 +1,125 @@
+/* ===================== App Layout ===================== */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+  background: linear-gradient(135deg, #1f2937, #3b82f6);
+  color: #fff;
+}
+
+.main {
+  flex: 1;
+}
+
+/* ===================== Hero Section ===================== */
+.hero {
+  text-align: center;
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+  border-radius: 0 0 40px 40px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0 auto 1.5rem;
+  max-width: 800px;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  margin: 0 auto 2.5rem;
+  max-width: 600px;
+  color: #e0e7ff;
+}
+
+.heroActions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.ctaButton,
+.secondaryButton {
+  padding: 0.9rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.ctaButton {
+  background: #fff;
+  color: #3b82f6;
+}
+
+.ctaButton:hover {
+  background: #f0f4ff;
+  transform: translateY(-2px);
+}
+
+.secondaryButton {
+  background: transparent;
+  border: 2px solid #fff;
+  color: #fff;
+}
+
+.secondaryButton:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* ===================== Features Section ===================== */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 2rem;
+  padding: 4rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.featureCard {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(10px);
+}
+
+.featureCard:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+}
+
+.icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #0ea5e9;
+}
+
+/* ===================== Why Us Section ===================== */
+.whyUs {
+  text-align: center;
+  padding: 4rem 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.whyUs h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.whyUs p {
+  font-size: 1.15rem;
+  color: #e0e7ff;
+  line-height: 1.6;
+}

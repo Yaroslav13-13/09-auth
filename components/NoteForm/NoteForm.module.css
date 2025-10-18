@@ -1,0 +1,180 @@
+.noteFormModal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #00abe4;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  padding: 24px;
+  width: 90%;
+  max-width: 480px;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ===================== Form ===================== */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  font-size: 18px;
+  font-weight: 500;
+  color: #000;
+}
+
+/* ===================== Inputs ===================== */
+.input,
+.textarea,
+.select {
+  margin-top: 4px;
+  padding: 10px 14px;
+  font-size: 14px;
+  border-radius: 12px;
+  border: 1px solid #00abe4;
+  transition: all 0.2s ease;
+  background: #fff;
+  color: #000;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  border-color: #0079b5;
+  box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.15);
+}
+
+.textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.select option,
+.selector option {
+  padding: 6px;
+  border-radius: 12px;
+}
+
+/* ===================== Buttons ===================== */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.submitButton,
+.cancelButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 12px;
+  background: #00abe4;
+  color: #fff;
+  cursor: pointer;
+  border: none;
+  transition:
+    background-color 0.2s,
+    transform 0.2s;
+}
+
+.submitButton:hover {
+  background: #0079b5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 171, 228, 0.3);
+}
+
+.submitButton:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.cancelButton:hover {
+  background: #fff;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+/* ===================== Tags ===================== */
+.tag,
+.tag_todo,
+.tag_work,
+.tag_personal,
+.tag_meeting,
+.tag_shopping {
+  border-radius: 8px;
+  font-size: 13px;
+  padding: 4px 10px;
+  display: inline-block;
+  margin: 2px 0;
+  background: #e0f0ff;
+  color: #0079b5;
+  font-weight: 500;
+}
+
+/* ===================== Custom Select ===================== */
+.customSelect {
+  position: relative;
+  cursor: pointer;
+}
+
+.selectedTag {
+  padding: 8px 12px;
+  border: 1px solid #00abe4;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.selectList {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin: 4px 0 0 0;
+  padding: 0;
+  list-style: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  z-index: 10;
+}
+
+.selectList li {
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.selectList li:hover {
+  background: #f0f4f8;
+}
+
+/* ===================== Misc ================== */
+.error {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ===================== Animations =================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
