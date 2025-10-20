@@ -1,14 +1,52 @@
-.navigationItem {
+.navList {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   list-style: none;
-  display: inline-block;
-  margin-left: 12px;
+  margin: 0;
+  padding: 0;
 }
-.navigationLink {
-  text-decoration: none;
-}
-.userEmail {
-  margin-right: 8px;
-}
-.logoutButton {
+
+.navLink {
+  all: unset;
   cursor: pointer;
+  display: inline-block;
+  padding: 0.5rem 0.8rem;
+  border-radius: 12px;
+  font-weight: 500;
+  color: #cbd5e1;
+  position: relative;
+  transition: all 0.25s ease;
+}
+
+.navLink:hover,
+.navLink.active {
+  color: #60a5fa;
+  transform: translateY(-1px);
+}
+
+.userEmail {
+  font-size: 0.9rem;
+  color: #f1f5f9;
+  padding: 0.5rem 0.8rem;
+  border-radius: 12px;
+  background: #334155;
+}
+
+.logoutButton {
+  all: unset;
+  cursor: pointer;
+  padding: 0.5rem 0.8rem;
+  font-weight: 500;
+  color: #fff;
+  background-color: #00abe4;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 171, 228, 0.3);
+}
+
+.logoutButton:hover {
+  background-color: #0095c7;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 171, 228, 0.4);
 }

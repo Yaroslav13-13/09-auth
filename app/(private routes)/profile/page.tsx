@@ -1,56 +1,45 @@
-import { cookies } from "next/headers";
-import { getMeServer } from "@/lib/api/serverApi";
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import type { Metadata } from "next";
+import { getMeClient } from "@/lib/api/clientApi";
+import { User } from "@/lib/api/clientApi";
+import css from "./Profile.module.css";
 
-export const metadata: Metadata = {
-  title: "Profile | NoteHub",
-  description: "Your profile on NoteHub",
-};
+export default function ProfilePage() {
+  const [user, setUser] = useState<User | null>(null);
 
-export default async function ProfilePage() {
-  const cookieStore = cookies();
-  const cookieHeader = cookieStore.toString();
+  useEffect(() => {
+    getMeClient().then(setUser).catch(console.error);
+  }, []);
 
-  try {
-    const me = await getMeServer(cookieHeader);
-    return (
-      <main style={{ padding: 24 }}>
-        <div style={{ maxWidth: 800 }}>
-          <div>
-            <h1>Profile Page</h1>
-            <a
-              href="/profile/edit"
-              style={{ marginLeft: 12 }}
-              className="editProfileButton"
-            >
-              {" "}
-              Edit Profile{" "}
-            </a>
-          </div>
-          <div style={{ marginTop: 24 }}>
+  if (!user) return <p>Loading...</p>;
+
+  return (
+    <main className={css.mainContent}>
+      <div className={css.profileCard}>
+        <div className={css.header}>
+          <h1 className={css.formTitle}>Profile Page</h1>
+          <a href="/profile/edit" className={css.editProfileButton}>
+            Edit Profile
+          </a>
+        </div>
+        <div className={css.avatarWrapper}>
+          {user.avatar && (
             <Image
-              src={
-                me.avatar || "https://ac.goit.global/fullstack/react/avatar.png"
-              }
+              src={user.avatar}
               alt="User Avatar"
               width={120}
               height={120}
+              className={css.avatar}
             />
-          </div>
-          <div style={{ marginTop: 16 }}>
-            <p>Username: {me.username}</p>
-            <p>Email: {me.email}</p>
-          </div>
+          )}
         </div>
-      </main>
-    );
-  } catch (err) {
-    return (
-      <main style={{ padding: 24 }}>
-        <h1>Profile</h1>
-        <p>Could not load profile. Please sign in again.</p>
-      </main>
-    );
-  }
+        <div className={css.profileInfo}>
+          <p>Username: {user.username}</p>
+          <p>Email: {user.email}</p>
+        </div>
+      </div>
+    </main>
+  );
 }

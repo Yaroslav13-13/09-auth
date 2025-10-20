@@ -1,85 +1,54 @@
 .mainContent {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 120px);
-  padding: 40px;
-  background-color: #f5f7fa;
+  max-width: 500px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: #1e293b;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  color: #cbd5e1;
 }
 
 .profileCard {
-  background-color: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 40px;
-  width: 100%;
-  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   text-align: center;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .formTitle {
-  font-size: 28px;
-  margin-bottom: 20px;
-  color: #333;
+  font-size: 2rem;
+  color: #60a5fa;
+}
+
+.editProfileButton {
+  padding: 0.3rem 0.6rem;
+  border-radius: 9999px;
+  background: #00abe4;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.editProfileButton:hover {
+  background: #0095c7;
+}
+
+.avatarWrapper {
+  display: flex;
+  justify-content: center;
 }
 
 .avatar {
   border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 20px;
 }
 
-.profileInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.usernameWrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 8px;
-}
-
-.input {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 16px;
-}
-
-.actions {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.saveButton {
-  background-color: #0070f3;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.cancelButton {
-  background-color: #ccc;
-  color: #333;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.saveButton:hover {
-  background-color: #0058c1;
-}
-
-.cancelButton:hover {
-  background-color: #b3b3b3;
+.profileInfo p {
+  margin: 0.25rem 0;
 }
