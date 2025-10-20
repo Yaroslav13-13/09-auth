@@ -1,105 +1,3 @@
-// export type Note = any;
-// export type User = any;
-
-// const json = async (res: Response) => {
-//   const text = await res.text();
-//   try {
-//     return text ? JSON.parse(text) : null;
-//   } catch {
-//     return text;
-//   }
-// };
-
-// const apiFetch = async (path: string, opts: RequestInit = {}) => {
-//   const res = await fetch(path, { credentials: "include", ...opts });
-//   if (!res.ok) {
-//     const payload = await json(res);
-//     const err = new Error(
-//       payload?.message || res.statusText || "Request failed"
-//     );
-//     (err as any).payload = payload;
-//     throw err;
-//   }
-//   return json(res);
-// };
-
-// /* Notes */
-// export async function fetchNotes(params: {
-//   page?: number;
-//   perPage?: number;
-//   search?: string;
-//   tag?: string;
-// }) {
-//   const qs = new URLSearchParams();
-//   if (params.page) qs.set("page", String(params.page));
-//   if (params.perPage) qs.set("perPage", String(params.perPage));
-//   if (params.search) qs.set("search", params.search);
-//   if (params.tag) qs.set("tag", params.tag);
-//   return apiFetch(`/api/notes?${qs.toString()}`);
-// }
-
-// export async function fetchNoteById(id: string) {
-//   return apiFetch(`/api/notes/${id}`);
-// }
-
-// export async function createNote(payload: {
-//   title: string;
-//   content?: string;
-//   tag: string;
-// }) {
-//   return apiFetch(`/api/notes`, {
-//     method: "POST",
-//     body: JSON.stringify(payload),
-//   });
-// }
-
-// export async function deleteNote(id: string) {
-//   return apiFetch(`/api/notes/${id}`, { method: "DELETE" });
-// }
-
-// /* Auth */
-// export async function register(email: string, password: string) {
-//   return apiFetch(`/api/auth/register`, {
-//     method: "POST",
-//     body: JSON.stringify({ email, password }),
-//     headers: { "Content-Type": "application/json" },
-//   });
-// }
-
-// export async function login(email: string, password: string) {
-//   return apiFetch(`/api/auth/login`, {
-//     method: "POST",
-//     body: JSON.stringify({ email, password }),
-//     headers: { "Content-Type": "application/json" },
-//   });
-// }
-
-// export async function logout() {
-//   return apiFetch(`/api/auth/logout`, { method: "POST" });
-// }
-
-// export async function checkSession() {
-//   return apiFetch(`/api/auth/session`, { method: "GET" });
-// }
-
-// /* Users (via local /api/users/me -> proxy to real backend) */
-// export async function getMeClient() {
-//   return apiFetch(`/api/users/me`, { method: "GET" });
-// }
-
-// export async function updateMeClient(
-//   payload: Partial<{ email: string; username: string; avatar?: string }>
-// ) {
-//   return apiFetch(`/api/users/me`, {
-//     method: "PATCH",
-//     body: JSON.stringify(payload),
-//     headers: { "Content-Type": "application/json" },
-//   });
-// }
-
-import axios from "./api";
-
-// Типи
 export interface Note {
   id: string;
   title: string;
@@ -115,12 +13,12 @@ export interface User {
   avatar?: string;
 }
 
-// універсальна обробка fetch з cookies
-const apiFetch = async (path: string, opts: RequestInit = {}) => {
+/* ===================== UNIVERSAL FETCH ===================== */
+async function apiFetch<T>(path: string, opts: RequestInit = {}): Promise<T> {
   const res = await fetch(path, { credentials: "include", ...opts });
   const text = await res.text();
 
-  let data;
+  let data: unknown;
   try {
     data = text ? JSON.parse(text) : null;
   } catch {
@@ -128,13 +26,15 @@ const apiFetch = async (path: string, opts: RequestInit = {}) => {
   }
 
   if (!res.ok) {
-    const err = new Error(data?.message || res.statusText || "Request failed");
-    (err as any).payload = data;
-    throw err;
+    const message =
+      typeof data === "object" && data && "message" in data
+        ? ((data as { message?: string }).message ?? res.statusText)
+        : res.statusText;
+    throw new Error(message);
   }
 
-  return data;
-};
+  return data as T;
+}
 
 /* ===================== NOTES ===================== */
 export async function fetchNotes(params?: {
@@ -148,11 +48,11 @@ export async function fetchNotes(params?: {
   if (params?.perPage) qs.set("perPage", String(params.perPage));
   if (params?.search) qs.set("search", params.search);
   if (params?.tag) qs.set("tag", params.tag);
-  return apiFetch(`/api/notes?${qs.toString()}`);
+  return apiFetch<Note[]>(`/api/notes?${qs.toString()}`);
 }
 
 export async function fetchNoteById(id: string): Promise<Note> {
-  return apiFetch(`/api/notes/${id}`);
+  return apiFetch<Note>(`/api/notes/${id}`);
 }
 
 export async function createNote(payload: {
@@ -160,20 +60,22 @@ export async function createNote(payload: {
   content?: string;
   tag: string;
 }): Promise<Note> {
-  return apiFetch(`/api/notes`, {
+  return apiFetch<Note>(`/api/notes`, {
     method: "POST",
     body: JSON.stringify(payload),
     headers: { "Content-Type": "application/json" },
   });
 }
 
-export async function deleteNote(id: string): Promise<Note> {
-  return apiFetch(`/api/notes/${id}`, { method: "DELETE" });
+export async function deleteNote(id: string): Promise<{ message: string }> {
+  return apiFetch<{ message: string }>(`/api/notes/${id}`, {
+    method: "DELETE",
+  });
 }
 
 /* ===================== AUTH ===================== */
 export async function register(email: string, password: string): Promise<User> {
-  return apiFetch(`/api/auth/register`, {
+  return apiFetch<User>(`/api/auth/register`, {
     method: "POST",
     body: JSON.stringify({ email, password }),
     headers: { "Content-Type": "application/json" },
@@ -181,28 +83,32 @@ export async function register(email: string, password: string): Promise<User> {
 }
 
 export async function login(email: string, password: string): Promise<User> {
-  return apiFetch(`/api/auth/login`, {
+  return apiFetch<User>(`/api/auth/login`, {
     method: "POST",
     body: JSON.stringify({ email, password }),
     headers: { "Content-Type": "application/json" },
   });
 }
 
-export async function logout(): Promise<void> {
-  return apiFetch(`/api/auth/logout`, { method: "POST" });
+export async function logout(): Promise<{ message: string }> {
+  return apiFetch<{ message: string }>(`/api/auth/logout`, { method: "POST" });
 }
 
 export async function checkSession(): Promise<User | null> {
-  return apiFetch(`/api/auth/session`, { method: "GET" });
+  try {
+    return await apiFetch<User>(`/api/auth/session`);
+  } catch {
+    return null;
+  }
 }
 
 /* ===================== USERS ===================== */
 export async function getMeClient(): Promise<User> {
-  return apiFetch(`/api/users/me`, { method: "GET" });
+  return apiFetch<User>(`/api/users/me`);
 }
 
 export async function updateMeClient(payload: Partial<User>): Promise<User> {
-  return apiFetch(`/api/users/me`, {
+  return apiFetch<User>(`/api/users/me`, {
     method: "PATCH",
     body: JSON.stringify(payload),
     headers: { "Content-Type": "application/json" },
