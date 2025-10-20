@@ -63,3 +63,91 @@
 .contact a:hover {
   text-decoration: underline;
 }
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  color: #cbd5e1;
+  font-family: "Inter", sans-serif;
+  line-height: 1.6;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  color: #60a5fa;
+  margin-bottom: 0.5rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #94a3b8;
+}
+
+.features {
+  margin-bottom: 3rem;
+}
+
+.features h2 {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #60a5fa;
+}
+
+.featureList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.featureItem {
+  background: #1e293b;
+  padding: 1.5rem;
+  border-radius: 12px;
+  flex: 1 1 250px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.featureItem:hover {
+  transform: translateY(-5px);
+}
+
+.featureItem h3 {
+  margin-bottom: 0.5rem;
+  color: #00abe4;
+}
+
+.team {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.team h2 {
+  color: #60a5fa;
+  margin-bottom: 1rem;
+}
+
+.callToAction {
+  text-align: center;
+  background: #0f172a;
+  padding: 2rem;
+  border-radius: 12px;
+}
+
+.callToAction h2 {
+  font-size: 1.8rem;
+  color: #00abe4;
+  margin-bottom: 0.5rem;
+}
+
+.callToAction p {
+  color: #cbd5e1;
+}

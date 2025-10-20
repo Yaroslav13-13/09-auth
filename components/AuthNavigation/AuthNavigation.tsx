@@ -1,116 +1,56 @@
-// "use client";
-// import Link from "next/link";
-// import { useRouter } from "next/navigation";
-// import { useAuthStore } from "@/lib/store/authStore";
-// import { logout as apiLogout, getMeClient } from "@/lib/api/clientApi";
-// import styles from "./AuthNavigation.module.css";
-
-// export default function AuthNavigation() {
-//   const router = useRouter();
-//   const { user, isAuthenticated, clearIsAuthenticated, setUser } =
-//     useAuthStore();
-
-//   const handleLogout = async () => {
-//     try {
-//       await apiLogout();
-//     } catch {
-//       // ignore
-//     } finally {
-//       clearIsAuthenticated();
-//       router.push("/sign-in");
-//     }
-//   };
-
-//   if (isAuthenticated && user) {
-//     return (
-//       <>
-//         <li className={styles.navigationItem}>
-//           <Link
-//             href="/profile"
-//             prefetch={false}
-//             className={styles.navigationLink}
-//           >
-//             Profile
-//           </Link>
-//         </li>
-//         <li className={styles.navigationItem}>
-//           <p className={styles.userEmail}>{user.email}</p>
-//           <button className={styles.logoutButton} onClick={handleLogout}>
-//             Logout
-//           </button>
-//         </li>
-//       </>
-//     );
-//   }
-
-//   return (
-//     <>
-//       <li className={styles.navigationItem}>
-//         <Link
-//           href="/sign-in"
-//           prefetch={false}
-//           className={styles.navigationLink}
-//         >
-//           Login
-//         </Link>
-//       </li>
-//       <li className={styles.navigationItem}>
-//         <Link
-//           href="/sign-up"
-//           prefetch={false}
-//           className={styles.navigationLink}
-//         >
-//           Sign up
-//         </Link>
-//       </li>
-//     </>
-//   );
-// }
-
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuthStore } from "../../lib/store/authStore";
-import { logout } from "../../lib/api/clientApi";
 import css from "./AuthNavigation.module.css";
 
 export default function AuthNavigation() {
-  const { user, isAuthenticated, clearIsAuthenticated } = useAuthStore();
-  const router = useRouter();
+  const { user, isAuthenticated, logout } = useAuthStore();
 
   const handleLogout = async () => {
     await logout();
-    clearIsAuthenticated();
-    router.push("/sign-in"); // після виходу переходимо на сторінку входу
+    window.location.href = "/sign-in";
   };
 
   return (
-    <ul className={css.navList}>
-      {isAuthenticated ? (
+    <ul className={css.navigationList}>
+      {isAuthenticated && user ? (
         <>
-          <li>
-            <a href="/profile" className={css.navLink}>
+          <li className={css.navigationItem}>
+            <Link
+              href="/profile"
+              prefetch={false}
+              className={css.navigationLink}
+            >
               Profile
-            </a>
+            </Link>
           </li>
-          <li className={css.userEmail}>{user?.email}</li>
-          <li>
+          <li className={css.navigationItem}>
+            <p className={css.userName}>{user.username}</p>
             <button onClick={handleLogout} className={css.logoutButton}>
-              Logout
+              Log out
             </button>
           </li>
         </>
       ) : (
         <>
-          <li>
-            <a href="/sign-in" className={css.navLink}>
-              Sign In
-            </a>
+          <li className={css.navigationItem}>
+            <Link
+              href="/sign-in"
+              prefetch={false}
+              className={css.navigationLink}
+            >
+              Login
+            </Link>
           </li>
-          <li>
-            <a href="/sign-up" className={css.navLink}>
-              Sign Up
-            </a>
+          <li className={css.navigationItem}>
+            <Link
+              href="/sign-up"
+              prefetch={false}
+              className={css.navigationLink}
+            >
+              Sign up
+            </Link>
           </li>
         </>
       )}

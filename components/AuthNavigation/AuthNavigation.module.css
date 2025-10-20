@@ -50,3 +50,32 @@
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(0, 171, 228, 0.4);
 }
+
+.navigationList {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navigationItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.userName {
+  color: #fff;
+  font-weight: 600;
+}
+
+.logoutButton {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 6px;
+  background-color: #ef4444; /* червоний */
+  color: #333;
+  cursor: pointer;
+  font-weight: 600;
+}
