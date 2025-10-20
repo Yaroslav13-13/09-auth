@@ -1,62 +1,58 @@
 "use client";
-
 import React, { useState } from "react";
-import Link from "next/link";
-import { FiHome } from "react-icons/fi";
-import css from "./SignIn.module.css";
+import { useRouter } from "next/navigation";
+import { login, getMeClient } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const setUser = useAuthStore((s) => s.setUser);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Sign In feature coming soon 🚀");
+    setError(null);
+    try {
+      await login(email, password);
+      const me = await getMeClient();
+      setUser(me);
+      router.push("/profile");
+    } catch (err: any) {
+      setError(err?.payload?.message || err?.message || "Login failed");
+    }
   };
 
   return (
-    <main className={css.container}>
-      <div className={css.card}>
-        {/* Go Home кнопка */}
-        <div className={css.goHomeContainer}>
-          <Link href="/" className={css.goHomeButton}>
-            <FiHome size={20} className={css.icon} />
-            Go Home
-          </Link>
-        </div>
-        {/* Текст */}
-        <div className={css.headerText}>
-          <h1>Welcome</h1>
-          <p>Sign in to your account or create a new one</p>
-        </div>
-
-        {/* Форма */}
-        <form className={css.form} onSubmit={handleSubmit}>
+    <main style={{ textAlign: "center", marginTop: 40 }}>
+      <h1>Sign in</h1>
+      <form onSubmit={handleSubmit} style={{ marginTop: 16 }}>
+        <div style={{ marginBottom: 8 }}>
+          <label htmlFor="email">Email</label>
           <input
-            type="email"
-            placeholder="Email"
+            id="email"
+            required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={css.input}
-            required
+            type="email"
           />
+        </div>
+        <div style={{ marginBottom: 8 }}>
+          <label htmlFor="password">Password</label>
           <input
-            type="password"
-            placeholder="Password"
+            id="password"
+            required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className={css.input}
-            required
+            type="password"
           />
-          <button type="submit" className={css.button}>
-            Sign In
-          </button>
-        </form>
-
-        <p className={css.hint}>
-          Don’t have an account? <Link href="#">Sign up</Link>
-        </p>
-      </div>
+        </div>
+        <div style={{ marginTop: 12 }}>
+          <button type="submit">Log in</button>
+        </div>
+        {error && <p style={{ color: "red" }}>{error}</p>}
+      </form>
     </main>
   );
 }

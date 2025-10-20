@@ -1,0 +1,14 @@
+.navigationItem {
+  list-style: none;
+  display: inline-block;
+  margin-left: 12px;
+}
+.navigationLink {
+  text-decoration: none;
+}
+.userEmail {
+  margin-right: 8px;
+}
+.logoutButton {
+  cursor: pointer;
+}
