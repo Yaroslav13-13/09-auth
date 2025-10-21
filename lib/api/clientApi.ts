@@ -34,7 +34,6 @@ async function apiFetch<T>(
         ? ((data as { message?: string }).message ?? res.statusText)
         : res.statusText;
 
-    // Якщо 401 або 403 — повертаємо null замість помилки
     if (res.status === 401 || res.status === 403) {
       return null;
     }
@@ -57,7 +56,9 @@ export async function fetchNotes(params?: {
   if (params?.perPage) qs.set("perPage", String(params.perPage));
   if (params?.search) qs.set("search", params.search);
   if (params?.tag) qs.set("tag", params.tag);
-  return apiFetch<Note[]>(`/api/notes?${qs.toString()}`) || [];
+
+  const notes = await apiFetch<Note[]>(`/api/notes?${qs.toString()}`);
+  return notes ?? [];
 }
 
 export async function fetchNoteById(id: string): Promise<Note | null> {
