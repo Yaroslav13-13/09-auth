@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { getMeClient } from "@/lib/api/clientApi";
 import { User } from "@/lib/api/clientApi";
-import css from "./Profile.module.css";
+import css from "@/app/(private routes)/profile/Profile.module.css";
 import Loader from "@/components/Loader/Loader";
 
 export default function ProfilePage() {
