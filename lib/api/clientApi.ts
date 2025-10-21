@@ -1,3 +1,5 @@
+import { User } from "@/types/user";
+
 export interface Note {
   id: string;
   title: string;
@@ -5,12 +7,6 @@ export interface Note {
   tag: string;
   createdAt?: string;
   updatedAt?: string;
-}
-
-export interface User {
-  email: string;
-  username: string;
-  avatar?: string;
 }
 
 /* ===================== UNIVERSAL FETCH ===================== */
