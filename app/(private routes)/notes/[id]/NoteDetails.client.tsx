@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { fetchNoteById } from "../../../../lib/api";
+import { fetchNoteById } from "@/lib/clientApi";
 import type { Note } from "../../../../types/note";
 import Loader from "../../../../components/Loader/Loader";
 import { FiTag, FiCalendar, FiX } from "react-icons/fi";
