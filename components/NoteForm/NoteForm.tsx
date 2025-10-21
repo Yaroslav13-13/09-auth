@@ -24,29 +24,12 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
   const [form, setForm] = useState({
     title: draft?.title ?? initialDraft.title,
     content: draft?.content ?? initialDraft.content,
-    tag: (draft?.tag as NoteTag) ?? initialDraft.tag,
+    tag: draft?.tag ?? initialDraft.tag,
   });
 
   useEffect(() => {
-    setForm({
-      title: draft?.title ?? initialDraft.title,
-      content: draft?.content ?? initialDraft.content,
-      tag: (draft?.tag as NoteTag) ?? initialDraft.tag,
-    });
-  }, [draft]);
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setForm((prev) => {
-      const next = { ...prev, [name]: value };
-      setDraft({ [name]: value } as Partial<typeof next>);
-      return next;
-    });
-  };
+    setDraft(form);
+  }, [form, setDraft]);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +37,6 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
     mutationFn: (payload: CreateNotePayload) => createNote(payload),
     onSuccess: async () => {
       clearDraft();
-
       await queryClient.invalidateQueries({ queryKey: ["notes"] });
       router.back();
     },
@@ -62,6 +44,15 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     },
   });
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

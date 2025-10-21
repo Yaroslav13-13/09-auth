@@ -5,19 +5,33 @@ import { useRouter } from "next/navigation";
 import { register } from "@/lib/api/clientApi";
 import css from "./SignUp.module.css";
 
+interface PayloadError {
+  payload?: {
+    message?: string;
+  };
+}
+
 export default function SignUpPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
     try {
       await register(email, password);
       router.push("/profile");
-    } catch (err: any) {
-      setError(err.payload?.message || "Registration failed");
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message || "Registration failed");
+      } else if (typeof err === "object" && err !== null && "payload" in err) {
+        const payloadErr = err as PayloadError;
+        setError(payloadErr.payload?.message || "Registration failed");
+      } else {
+        setError("Registration failed");
+      }
     }
   };
 

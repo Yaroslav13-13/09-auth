@@ -1,5 +1,5 @@
-.mainContent {
-  max-width: 500px;
+.main {
+  max-width: 600px;
   margin: 3rem auto;
   padding: 2rem;
   background: #1e293b;
@@ -8,50 +8,60 @@
   color: #cbd5e1;
 }
 
-.noteCard {
+/* Центруємо контент */
+.container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
-.formTitle {
+/* Заголовок сторінки */
+.title {
   font-size: 2rem;
-  color: #60a5fa;
   text-align: center;
+  color: #60a5fa;
   margin: 0;
 }
 
+/* Форма нотатки */
 .noteForm {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
+/* Група полів */
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
+/* Поля input і textarea */
 .input,
 .textarea {
-  padding: 0.5rem 0.75rem;
+  padding: 0.6rem 0.75rem;
   border-radius: 8px;
   border: 1px solid #0095c7;
   background: #0f172a;
   color: #fff;
+  transition: all 0.25s ease;
 }
 
+/* Ефект фокусу */
 .input:focus,
 .textarea:focus {
   outline: 2px solid #00abe4;
+  transform: translateY(-1px);
 }
 
+/* textarea */
 .textarea {
   min-height: 120px;
   resize: vertical;
 }
 
+/* Кнопки */
 .actions {
   display: flex;
   gap: 1rem;
@@ -59,36 +69,37 @@
   margin-top: 1rem;
 }
 
-.saveButton {
+.saveButton,
+.cancelButton {
   padding: 0.5rem 1.4rem;
   border: none;
   border-radius: 9999px;
-  background: #00abe4;
-  color: #fff;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.2s all;
+  transition: all 0.25s ease;
+}
+
+.saveButton {
+  background: #00abe4;
+  color: #fff;
 }
 
 .saveButton:hover {
   background: #0095c7;
+  transform: translateY(-1px);
 }
 
 .cancelButton {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 9999px;
   background: #f87171;
   color: #fff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s all;
 }
 
 .cancelButton:hover {
   background: #ef4444;
+  transform: translateY(-1px);
 }
 
+/* Вивід помилок */
 .error {
   color: #f87171;
   text-align: center;

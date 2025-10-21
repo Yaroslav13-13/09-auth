@@ -3,14 +3,15 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: #00abe4;
+  background: #1e293b; /* темний фон NoteHub */
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   padding: 24px;
   width: 90%;
   max-width: 480px;
   z-index: 1000;
   animation: fadeIn 0.3s ease;
+  color: #cbd5e1;
 }
 
 /* ===================== Form ===================== */
@@ -23,9 +24,9 @@
 .formGroup {
   display: flex;
   flex-direction: column;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 500;
-  color: #000;
+  color: #cbd5e1;
 }
 
 /* ===================== Inputs ===================== */
@@ -38,33 +39,33 @@
   border-radius: 12px;
   border: 1px solid #00abe4;
   transition: all 0.2s ease;
-  background: #fff;
-  color: #000;
+  background: #0f172a; /* темний фон для input */
+  color: #fff;
 }
 
 .input:focus,
 .textarea:focus,
 .select:focus {
   outline: none;
-  border-color: #0079b5;
-  box-shadow: 0 0 0 3px rgba(0, 171, 228, 0.15);
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
 }
 
 .textarea {
-  min-height: 80px;
+  min-height: 100px;
   resize: vertical;
 }
 
 .select {
   padding: 8px 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
 }
 
-.select option,
-.selector option {
+.select option {
   padding: 6px;
-  border-radius: 12px;
+  background: #1e293b;
+  color: #cbd5e1;
 }
 
 /* ===================== Buttons ===================== */
@@ -78,32 +79,41 @@
 .submitButton,
 .cancelButton {
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 15px;
   border-radius: 12px;
-  background: #00abe4;
-  color: #fff;
+  font-weight: 600;
   cursor: pointer;
   border: none;
   transition:
-    background-color 0.2s,
-    transform 0.2s;
+    all 0.2s ease,
+    transform 0.2s ease;
+}
+
+.submitButton {
+  background: #00abe4;
+  color: #fff;
 }
 
 .submitButton:hover {
-  background: #0079b5;
+  background: #0095c7;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 171, 228, 0.3);
 }
 
 .submitButton:disabled {
-  background-color: #6c757d;
+  background: #6c757d;
   cursor: not-allowed;
 }
 
+.cancelButton {
+  background: #f87171;
+  color: #fff;
+}
+
 .cancelButton:hover {
-  background: #fff;
-  color: #dc3545;
-  border: 1px solid #dc3545;
+  background: #ef4444;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 /* ===================== Tags ===================== */
@@ -118,8 +128,8 @@
   padding: 4px 10px;
   display: inline-block;
   margin: 2px 0;
-  background: #e0f0ff;
-  color: #0079b5;
+  background: #0f172a;
+  color: #60a5fa;
   font-weight: 500;
 }
 
@@ -133,7 +143,8 @@
   padding: 8px 12px;
   border: 1px solid #00abe4;
   border-radius: 8px;
-  background: #fff;
+  background: #0f172a;
+  color: #cbd5e1;
 }
 
 .selectList {
@@ -144,26 +155,26 @@
   margin: 4px 0 0 0;
   padding: 0;
   list-style: none;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  background: #1e293b;
   z-index: 10;
 }
 
 .selectList li {
   padding: 8px 12px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s ease;
 }
 
 .selectList li:hover {
-  background: #f0f4f8;
+  background: #0f172a;
 }
 
 /* ===================== Misc ================== */
 .error {
-  color: #dc3545;
-  font-size: 12px;
+  color: #f87171;
+  font-size: 13px;
   margin-top: 4px;
 }
 

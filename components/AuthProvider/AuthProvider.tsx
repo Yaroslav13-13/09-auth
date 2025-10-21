@@ -1,9 +1,22 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import Loader from "@/components/Loader/Loader";
 import { useAuthStore } from "@/lib/store/authStore";
-import { checkSession, getMeClient } from "@/lib/api/clientApi";
-import { usePathname, useRouter } from "next/navigation";
+import {
+  checkSession,
+  getMeClient,
+  type User as ApiUser,
+} from "@/lib/api/clientApi";
+import type { User } from "@/types/user";
+
+function mapApiUserToUser(apiUser: ApiUser): User {
+  return {
+    username: apiUser.username,
+    email: apiUser.email,
+    avatar: apiUser.avatar ?? "",
+  };
+}
 
 export default function AuthProvider({
   children,
@@ -13,37 +26,46 @@ export default function AuthProvider({
   const [checking, setChecking] = useState(true);
   const setUser = useAuthStore((s) => s.setUser);
   const clearAuth = useAuthStore((s) => s.clearIsAuthenticated);
-  const pathname = usePathname();
-  const router = useRouter();
 
   useEffect(() => {
     let mounted = true;
-    (async () => {
+
+    const checkAuth = async () => {
       try {
         const session = await checkSession();
-        // If session returns user object or success true, fetch me
-        if (session && (session as any).success === true) {
-          const me = await getMeClient();
-          if (mounted) setUser(me);
-        } else if (session && (session as any).email) {
-          if (mounted) setUser(session as any);
+
+        if (session && (session as { success?: boolean }).success) {
+          const meFromApi = await getMeClient();
+          if (meFromApi && mounted) {
+            setUser(mapApiUserToUser(meFromApi));
+          }
+        } else if (session && (session as { email?: string }).email) {
+          if (mounted) {
+            const partialUser: User = {
+              username:
+                (session as { username?: string }).username ?? "Unknown",
+              email: (session as { email: string }).email,
+              avatar: "",
+            };
+            setUser(partialUser);
+          }
         } else {
-          // no session
           clearAuth();
         }
-      } catch (err) {
+      } catch {
         clearAuth();
       } finally {
         if (mounted) setChecking(false);
       }
-    })();
+    };
+
+    checkAuth();
+
     return () => {
       mounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setUser, clearAuth]);
 
-  // While checking, show loader (prevents flash)
   if (checking) return <Loader />;
 
   return <>{children}</>;

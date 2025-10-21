@@ -18,10 +18,15 @@ export default function EditProfilePage() {
   useEffect(() => {
     getMeClient()
       .then((data) => {
-        setUser(data);
-        setUsername(data.username);
+        if (data) {
+          // перевіряємо, що data не null
+          setUser(data);
+          setUsername(data.username);
+        } else {
+          setError("User not found");
+        }
       })
-      .catch((err) => setError("Failed to load user"))
+      .catch(() => setError("Failed to load user"))
       .finally(() => setLoading(false));
   }, []);
 
