@@ -67,15 +67,5 @@
 
 .userName {
   color: #fff;
-  font-weight: 600;
-}
-
-.logoutButton {
-  padding: 4px 8px;
-  border: none;
-  border-radius: 6px;
-  background-color: #ef4444; /* червоний */
-  color: #333;
-  cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
 }

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { getMeClient, updateMeClient } from "@/lib/api/clientApi";
 import { User } from "@/lib/api/clientApi";
 import css from "./EditProfile.module.css";
+import Loader from "@/components/Loader/Loader";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -36,7 +37,7 @@ export default function EditProfilePage() {
 
   const handleCancel = () => router.push("/profile");
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loader />;
   if (!user) return <p>{error || "User not found"}</p>;
 
   return (

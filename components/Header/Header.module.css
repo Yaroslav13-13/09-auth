@@ -30,7 +30,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  list-style: none; /* прибрали крапки */
+  list-style: none;
   margin: 0;
   padding: 0;
 }
@@ -39,7 +39,6 @@
   position: relative;
 }
 
-/* Посилання Home і кнопка Notes */
 .nav a,
 .navLink {
   all: unset;
@@ -60,8 +59,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 80%;
-  border: 2px solid #0095c7;
+  height: 100%;
   border-radius: 12px;
   transform: scaleX(0) scaleY(0);
   transform-origin: top left;
@@ -74,17 +72,17 @@
 .nav a.active::after,
 .navLink.active::after {
   transform: scaleX(1) scaleY(1);
+  border-bottom: 2px solid #00abe4;
+  border-top: 2px solid #00abe4;
 }
 
 .nav a:hover,
 .navLink:hover,
 .nav a.active,
 .navLink.active {
-  /* color: #0ea5e9; */
   transform: translateY(-1px);
 }
 
-/* Випадаюче меню */
 .dropdown {
   position: absolute;
   top: 100%;
@@ -114,7 +112,6 @@
 
 .dropdownLink:hover,
 .dropdownLink.active {
-  /* background: #00abe4; */
   color: #fff;
 }
 
@@ -135,4 +132,51 @@
   background: #0095c7;
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(0, 171, 228, 0.4);
+}
+
+.nav a,
+.navLink {
+  all: unset;
+  cursor: pointer;
+  display: inline-block;
+  padding: 0.6rem 1rem;
+  border-radius: 12px;
+  font-weight: 500;
+  color: #cbd5e1;
+  position: relative;
+  transition:
+    color 0.3s ease,
+    transform 0.25s ease;
+}
+
+/* Контур, який буде анімовано */
+.nav a::before,
+.navLink::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  /* border: 2px solid #00abe4; */
+  border-color: transparent;
+  border-top-color: #00abe4;
+  transform: rotate(0deg);
+  transform-origin: center;
+  transition: transform 0.6s ease;
+  pointer-events: none;
+}
+
+/* Ховер або актив */
+.nav a:hover::before,
+.navLink:hover::before,
+.nav a.active::before,
+.navLink.active::before {
+  animation: borderRotate 0.6s forwards;
+}
+
+/* Підняти текст на hover */
+.nav a:hover,
+.navLink:hover,
+.nav a.active,
+.navLink.active {
+  transform: translateY(-2px);
 }

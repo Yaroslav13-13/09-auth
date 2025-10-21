@@ -30,7 +30,7 @@ export default function TagsMenu({ isActive }: TagsMenuProps) {
         className={`${css.navLink} ${isActive ? css.active : ""}`}
         onClick={toggleMenu}
       >
-        Notes ▾
+        Notes
       </button>
       {open && (
         <ul className={css.dropdown}>
