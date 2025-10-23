@@ -1,17 +1,5 @@
-export interface Note {
-  id: string;
-  title: string;
-  content?: string;
-  tag: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface User {
-  email: string;
-  username: string;
-  avatar?: string;
-}
+import type { Note } from "@/types/note";
+import type { User } from "@/types/user";
 
 /* ===================== UNIVERSAL FETCH ===================== */
 async function apiFetch<T>(

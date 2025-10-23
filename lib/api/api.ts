@@ -1,14 +1,10 @@
 import axios from "axios";
 
-const BASE = process.env.NEXT_PUBLIC_API_URL;
-if (!BASE) {
-  console.warn("⚠️ NEXT_PUBLIC_API_URL is not defined");
-}
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "https://notehub-api.goit.study";
 
 export const api = axios.create({
-  baseURL: `${BASE ?? "https://notehub-api.goit.study"}/api`,
+  baseURL: BASE_URL,
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  headers: { "Content-Type": "application/json" },
 });
