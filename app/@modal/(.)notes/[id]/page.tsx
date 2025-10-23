@@ -3,7 +3,7 @@ import {
   dehydrate,
   HydrationBoundary,
 } from "@tanstack/react-query";
-import { fetchNoteById } from "@/lib/clientApi";
+import { fetchNoteById } from "@/lib/notehubApi";
 import NotePreview from "./NotePreview.client";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 

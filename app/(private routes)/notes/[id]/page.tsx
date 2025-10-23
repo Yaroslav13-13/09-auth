@@ -1,4 +1,4 @@
-import { fetchNoteById } from "@/lib/clientApi";
+import { fetchNoteById } from "@/lib/notehubApi";
 import type { Metadata } from "next";
 
 interface NotePageProps {
