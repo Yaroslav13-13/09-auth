@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { api } from "../../api";
 import { cookies } from "next/headers";
 import { parse } from "cookie";
+import { isAxiosError } from "axios";
 import { logErrorResponse } from "../../_utils/utils";
-import type { AxiosError } from "axios";
-import axios from "axios";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,13 +15,12 @@ export async function POST(req: NextRequest) {
 
     if (setCookie) {
       const cookieArray = Array.isArray(setCookie) ? setCookie : [setCookie];
-
       for (const cookieStr of cookieArray) {
         const parsed = parse(cookieStr);
         const options = {
           expires: parsed.Expires ? new Date(parsed.Expires) : undefined,
           path: parsed.Path,
-          maxAge: parsed["Max-Age"] ? Number(parsed["Max-Age"]) : undefined,
+          maxAge: Number(parsed["Max-Age"]),
         };
         if (parsed.accessToken)
           cookieStore.set("accessToken", parsed.accessToken, options);
@@ -34,26 +32,15 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  } catch (err: unknown) {
-    // ✅ Type-safe обробка помилок
-    if (axios.isAxiosError(err)) {
-      const error = err as AxiosError;
+  } catch (error) {
+    if (isAxiosError(error)) {
       logErrorResponse(error.response?.data);
-
       return NextResponse.json(
-        {
-          error: error.message,
-          response: error.response?.data,
-        },
-        {
-          status: error.response?.status || 500,
-        }
+        { error: error.message, response: error.response?.data },
+        { status: error.status }
       );
     }
-
-    const error = err as Error;
-    logErrorResponse({ message: error.message });
-
+    logErrorResponse({ message: (error as Error).message });
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

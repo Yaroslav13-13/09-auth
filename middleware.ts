@@ -1,13 +1,30 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { checkSessionServer } from "@/lib/api/serverApi";
 
 const publicAuthPages = ["/sign-in", "/sign-up", "/signin", "/signup"];
 const privatePrefixes = ["/notes", "/profile"];
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const accessToken = req.cookies.get("accessToken")?.value;
-  const refreshToken = req.cookies.get("refreshToken")?.value;
+  let accessToken = req.cookies.get("accessToken")?.value;
+  let refreshToken = req.cookies.get("refreshToken")?.value;
+
+  // Якщо немає accessToken, але є refreshToken → оновлюємо сесію
+  if (!accessToken && refreshToken) {
+    const newTokens = await checkSessionServer(refreshToken);
+
+    if (newTokens?.accessToken && newTokens?.refreshToken) {
+      accessToken = newTokens.accessToken;
+      refreshToken = newTokens.refreshToken;
+
+      const res = NextResponse.next();
+      res.cookies.set("accessToken", accessToken, { httpOnly: true });
+      res.cookies.set("refreshToken", refreshToken, { httpOnly: true });
+      return res;
+    }
+  }
+
   const hasToken = Boolean(accessToken || refreshToken);
 
   // Redirect logged-in users away from auth pages

@@ -6,7 +6,7 @@ if (!BASE) {
 }
 
 export const api = axios.create({
-  baseURL: BASE ?? "https://notehub-api.goit.study",
+  baseURL: `${BASE ?? "https://notehub-api.goit.study"}/api`,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
