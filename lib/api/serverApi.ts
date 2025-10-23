@@ -1,70 +1,57 @@
-import { Note, User } from "./clientApi";
+import { api } from "./api";
+import type { Note, User } from "./clientApi";
+import type { AxiosResponse } from "axios";
 
 /* ===================== SERVER FETCH ===================== */
-async function serverFetch<T>(
+async function serverRequest<T>(
   url: string,
   cookieHeader?: string,
-  init: RequestInit = {}
-): Promise<T> {
-  const res = await fetch(url, {
-    ...init,
+  config: object = {}
+): Promise<AxiosResponse<T>> {
+  return api.request<T>({
+    url,
+    withCredentials: true,
     headers: {
-      "Content-Type": "application/json",
       ...(cookieHeader ? { Cookie: cookieHeader } : {}),
-      ...(init.headers || {}),
+      ...config,
     },
-    credentials: "include",
+    ...config,
   });
-
-  const text = await res.text();
-  let data: unknown;
-  try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = text;
-  }
-
-  if (!res.ok) {
-    const message =
-      typeof data === "object" && data && "message" in data
-        ? ((data as { message?: string }).message ?? res.statusText)
-        : res.statusText;
-    throw new Error(message);
-  }
-
-  return data as T;
 }
 
 /* ===================== NOTES ===================== */
 export async function fetchNotesServer(
   params?: { page?: number; perPage?: number; search?: string; tag?: string },
   cookieHeader?: string
-): Promise<Note[]> {
+): Promise<AxiosResponse<Note[]>> {
   const qs = new URLSearchParams();
   if (params?.page) qs.set("page", String(params.page));
   if (params?.perPage) qs.set("perPage", String(params.perPage));
   if (params?.search) qs.set("search", params.search);
   if (params?.tag) qs.set("tag", params.tag);
-  return serverFetch<Note[]>(`/api/notes?${qs.toString()}`, cookieHeader);
+
+  return serverRequest<Note[]>(`/api/notes?${qs.toString()}`, cookieHeader);
 }
 
 export async function fetchNoteByIdServer(
   id: string,
   cookieHeader?: string
-): Promise<Note> {
-  return serverFetch<Note>(`/api/notes/${id}`, cookieHeader);
+): Promise<AxiosResponse<Note>> {
+  return serverRequest<Note>(`/api/notes/${id}`, cookieHeader);
 }
 
 /* ===================== USERS ===================== */
-export async function getMeServer(cookieHeader?: string): Promise<User> {
-  return serverFetch<User>(`/api/users/me`, cookieHeader);
+export async function getMeServer(
+  cookieHeader?: string
+): Promise<AxiosResponse<User>> {
+  return serverRequest<User>(`/api/users/me`, cookieHeader);
 }
 
 export async function checkSessionServer(
   cookieHeader?: string
-): Promise<User | null> {
+): Promise<AxiosResponse<User> | null> {
   try {
-    return await serverFetch<User>(`/api/auth/session`, cookieHeader);
+    return await serverRequest<User>(`/api/auth/session`, cookieHeader);
   } catch {
     return null;
   }

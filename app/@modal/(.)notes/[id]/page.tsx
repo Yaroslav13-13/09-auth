@@ -3,7 +3,7 @@ import {
   dehydrate,
   HydrationBoundary,
 } from "@tanstack/react-query";
-import { fetchNoteById } from "@/lib/notehubApi";
+import { fetchNoteByIdServer } from "@/lib/api/serverApi";
 import NotePreview from "./NotePreview.client";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 
@@ -17,7 +17,7 @@ export default async function NoteModalPage({
 
   await queryClient.prefetchQuery({
     queryKey: ["note", id],
-    queryFn: () => fetchNoteById(id),
+    queryFn: () => fetchNoteByIdServer(id),
   });
 
   return (

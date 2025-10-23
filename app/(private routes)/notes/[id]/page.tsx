@@ -1,17 +1,21 @@
-import { fetchNoteById } from "@/lib/notehubApi";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import getQueryClient from "@/lib/getQueryClient";
+import { fetchNoteByIdServer } from "@/lib/api/serverApi";
+import NoteClient from "../filter/[...slug]/Notes.client";
 import type { Metadata } from "next";
 
 interface NotePageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata({
   params,
 }: NotePageProps): Promise<Metadata> {
-  const { id } = params;
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
 
   try {
-    const note = await fetchNoteById(id);
+    const note = await fetchNoteByIdServer(id);
     const short = note.content ? note.content.slice(0, 140) : "";
 
     return {
@@ -46,15 +50,22 @@ export async function generateMetadata({
 }
 
 export default async function NotePage({ params }: NotePageProps) {
-  const note = await fetchNoteById(params.id);
+  const resolvedParams = await params;
+  const id = resolvedParams.id;
+
+  const queryClient = getQueryClient();
+
+  // Prefetch note на сервері
+  await queryClient.prefetchQuery({
+    queryKey: ["note", id],
+    queryFn: () => fetchNoteByIdServer(id),
+  });
+
+  const dehydratedState = dehydrate(queryClient);
 
   return (
-    <main style={{ padding: "40px" }}>
-      <h1>{note.title}</h1>
-      <p>{note.content}</p>
-      <p>
-        <strong>Tag:</strong> {note.tag}
-      </p>
-    </main>
+    <HydrationBoundary state={dehydratedState}>
+      <NoteClient id={id} />
+    </HydrationBoundary>
   );
 }
