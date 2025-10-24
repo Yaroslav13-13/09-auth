@@ -8,19 +8,30 @@ const privatePrefixes = ["/notes", "/profile"];
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   let accessToken = req.cookies.get("accessToken")?.value;
-  let refreshToken = req.cookies.get("refreshToken")?.value;
+  const refreshToken = req.cookies.get("refreshToken")?.value;
 
   // Якщо немає accessToken, але є refreshToken → оновлюємо сесію
   if (!accessToken && refreshToken) {
-    const newTokens = await checkSessionServer(refreshToken);
+    try {
+      const newTokens = await checkSessionServer({
+        headers: { Cookie: `refreshToken=${refreshToken}` },
+      });
 
-    if (newTokens?.accessToken && newTokens?.refreshToken) {
-      accessToken = newTokens.accessToken;
-      refreshToken = newTokens.refreshToken;
-
+      if (newTokens?.accessToken && newTokens?.refreshToken) {
+        const res = NextResponse.next();
+        res.cookies.set("accessToken", newTokens.accessToken, {
+          httpOnly: true,
+        });
+        res.cookies.set("refreshToken", newTokens.refreshToken, {
+          httpOnly: true,
+        });
+        return res;
+      }
+    } catch {
+      // Якщо оновлення сесії не вдалося — видаляємо токени
       const res = NextResponse.next();
-      res.cookies.set("accessToken", accessToken, { httpOnly: true });
-      res.cookies.set("refreshToken", refreshToken, { httpOnly: true });
+      res.cookies.delete("accessToken");
+      res.cookies.delete("refreshToken");
       return res;
     }
   }
@@ -45,7 +56,6 @@ export async function middleware(req: NextRequest) {
       url.searchParams.set("from", pathname);
       return NextResponse.redirect(url);
     }
-    return NextResponse.next();
   }
 
   return NextResponse.next();

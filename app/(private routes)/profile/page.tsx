@@ -33,6 +33,7 @@ export default function ProfilePage() {
               width={120}
               height={120}
               className={css.avatar}
+              priority
             />
           )}
         </div>

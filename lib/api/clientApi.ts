@@ -1,120 +1,68 @@
+import { api } from "./api";
 import type { Note } from "@/types/note";
 import type { User } from "@/types/user";
 
-/* ===================== UNIVERSAL FETCH ===================== */
-async function apiFetch<T>(
-  path: string,
-  opts: RequestInit = {}
-): Promise<T | null> {
-  const res = await fetch(path, { credentials: "include", ...opts });
-  const text = await res.text();
-
-  let data: unknown;
-  try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = text;
-  }
-
-  if (!res.ok) {
-    const message =
-      typeof data === "object" && data && "message" in data
-        ? ((data as { message?: string }).message ?? res.statusText)
-        : res.statusText;
-
-    if (res.status === 401 || res.status === 403) {
-      return null;
-    }
-
-    throw new Error(message);
-  }
-
-  return data as T;
-}
-
 /* ===================== NOTES ===================== */
-export async function fetchNotes(params?: {
+export const fetchNotes = async (params?: {
   page?: number;
   perPage?: number;
   search?: string;
   tag?: string;
-}): Promise<Note[]> {
-  const qs = new URLSearchParams();
-  if (params?.page) qs.set("page", String(params.page));
-  if (params?.perPage) qs.set("perPage", String(params.perPage));
-  if (params?.search) qs.set("search", params.search);
-  if (params?.tag) qs.set("tag", params.tag);
+}): Promise<Note[]> => {
+  const { data } = await api.get<Note[]>("/notes", { params });
+  return data;
+};
 
-  const notes = await apiFetch<Note[]>(`/api/notes?${qs.toString()}`);
-  return notes ?? [];
-}
+export const fetchNoteById = async (id: string): Promise<Note> => {
+  const { data } = await api.get<Note>(`/notes/${id}`);
+  return data;
+};
 
-export async function fetchNoteById(id: string): Promise<Note | null> {
-  return apiFetch<Note>(`/api/notes/${id}`);
-}
-
-export async function createNote(payload: {
+export const createNote = async (payload: {
   title: string;
   content?: string;
   tag: string;
-}): Promise<Note | null> {
-  return apiFetch<Note>(`/api/notes`, {
-    method: "POST",
-    body: JSON.stringify(payload),
-    headers: { "Content-Type": "application/json" },
-  });
-}
+}): Promise<Note> => {
+  const { data } = await api.post<Note>("/notes", payload);
+  return data;
+};
 
-export async function deleteNote(
-  id: string
-): Promise<{ message: string } | null> {
-  return apiFetch<{ message: string }>(`/api/notes/${id}`, {
-    method: "DELETE",
-  });
-}
+export const deleteNote = async (id: string): Promise<{ message: string }> => {
+  const { data } = await api.delete<{ message: string }>(`/notes/${id}`);
+  return data;
+};
 
 /* ===================== AUTH ===================== */
-export async function register(
+export const register = async (
   email: string,
   password: string
-): Promise<User | null> {
-  return apiFetch<User>(`/api/auth/register`, {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-    headers: { "Content-Type": "application/json" },
-  });
-}
+): Promise<User> => {
+  const { data } = await api.post<User>("/auth/register", { email, password });
+  return data;
+};
 
-export async function login(
-  email: string,
-  password: string
-): Promise<User | null> {
-  return apiFetch<User>(`/api/auth/login`, {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-    headers: { "Content-Type": "application/json" },
-  });
-}
+export const login = async (email: string, password: string): Promise<User> => {
+  const { data } = await api.post<User>("/auth/login", { email, password });
+  return data;
+};
 
-export async function logout(): Promise<{ message: string } | null> {
-  return apiFetch<{ message: string }>(`/api/auth/logout`, { method: "POST" });
-}
+export const logout = async (): Promise<{ message: string }> => {
+  const { data } = await api.post<{ message: string }>("/auth/logout");
+  return data;
+};
 
-export async function checkSession(): Promise<User | null> {
-  return apiFetch<User>(`/api/auth/session`);
-}
+export const checkSession = async (): Promise<User> => {
+  const { data } = await api.get<User>("/auth/session");
+  return data;
+};
 
 /* ===================== USERS ===================== */
-export async function getMeClient(): Promise<User | null> {
-  return apiFetch<User>(`/api/users/me`);
-}
+export const getMeClient = async (): Promise<User> => {
+  const { data } = await api.get<User>("/users/me");
+  return data;
+};
 
-export async function updateMeClient(
-  payload: Partial<User>
-): Promise<User | null> {
-  return apiFetch<User>(`/api/users/me`, {
-    method: "PATCH",
-    body: JSON.stringify(payload),
-    headers: { "Content-Type": "application/json" },
-  });
-}
+export const updateMeClient = async (payload: Partial<User>): Promise<User> => {
+  const { data } = await api.patch<User>("/users/me", payload);
+  return data;
+};

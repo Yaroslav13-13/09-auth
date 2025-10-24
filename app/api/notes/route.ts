@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
     const rawTag = request.nextUrl.searchParams.get("tag") ?? "";
     const tag = rawTag === "All" ? "" : rawTag;
 
-    const res = await api("/notes", {
+    const res = await api.get("/notes", {
       params: {
         ...(search !== "" && { search }),
         page,
@@ -33,6 +33,7 @@ export async function GET(request: NextRequest) {
         { status: error.status }
       );
     }
+
     logErrorResponse({ message: (error as Error).message });
     return NextResponse.json(
       { error: "Internal Server Error" },
@@ -44,7 +45,6 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const cookieStore = await cookies();
-
     const body = await request.json();
 
     const res = await api.post("/notes", body, {
@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
         { status: error.status }
       );
     }
+
     logErrorResponse({ message: (error as Error).message });
     return NextResponse.json(
       { error: "Internal Server Error" },
