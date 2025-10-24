@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { User } from "../../types/user";
-import { logout as apiLogout } from "../../lib/api/clientApi"; // твій api logout
+import { logout as apiLogout } from "../../lib/api/clientApi";
 
 interface AuthStore {
   user: User | null;
@@ -16,7 +16,7 @@ export const useAuthStore = create<AuthStore>()((set) => ({
   setUser: (user: User) => set({ user, isAuthenticated: true }),
   clearIsAuthenticated: () => set({ user: null, isAuthenticated: false }),
   logout: async () => {
-    await apiLogout(); // виклик серверного logout
+    await apiLogout();
     set({ user: null, isAuthenticated: false });
   },
 }));

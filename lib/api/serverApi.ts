@@ -2,6 +2,13 @@ import { api } from "./api";
 import type { Note } from "@/types/note";
 import type { User } from "@/types/user";
 
+/* ===================== TYPES ===================== */
+export interface SessionResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+}
+
 /* ===================== NOTES ===================== */
 export async function fetchNotesServer(
   params?: { page?: number; perPage?: number; search?: string; tag?: string },
@@ -37,11 +44,12 @@ export async function getMeServer(cookieHeader?: string): Promise<User> {
   return data;
 }
 
+/* ===================== AUTH (SESSION) ===================== */
 export async function checkSessionServer(
   cookieHeader?: string
-): Promise<User | null> {
+): Promise<SessionResponse | null> {
   try {
-    const { data } = await api.get<User>(`/auth/session`, {
+    const { data } = await api.get<SessionResponse>(`/auth/session`, {
       headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
     });
     return data;
