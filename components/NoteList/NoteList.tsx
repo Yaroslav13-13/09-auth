@@ -13,8 +13,9 @@ interface NoteListProps {
 
 const NoteList: React.FC<NoteListProps> = ({ notes }) => {
   const queryClient = useQueryClient();
-  const mutation = useMutation<Note, Error, string>({
-    mutationFn: deleteNote,
+
+  const mutation = useMutation<{ message: string }, Error, string>({
+    mutationFn: (id: string) => deleteNote(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
