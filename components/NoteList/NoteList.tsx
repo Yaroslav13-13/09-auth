@@ -4,7 +4,7 @@ import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import css from "./NoteList.module.css";
-import { deleteNote } from "@/lib/clientApi";
+import { deleteNote } from "@/lib/api/clientApi";
 import type { Note } from "@/types/note";
 
 interface NoteListProps {
@@ -13,8 +13,9 @@ interface NoteListProps {
 
 const NoteList: React.FC<NoteListProps> = ({ notes }) => {
   const queryClient = useQueryClient();
-  const mutation = useMutation<Note, Error, string>({
-    mutationFn: deleteNote,
+
+  const mutation = useMutation<{ message: string }, Error, string>({
+    mutationFn: (id: string) => deleteNote(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notes"] });
     },

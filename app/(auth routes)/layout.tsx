@@ -1,4 +1,7 @@
-import React from "react";
+"use client";
+
+import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import "./auth.css";
 
 export default function AuthLayout({
@@ -6,6 +9,13 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Оновлюємо стан маршрутизатора при монтуванні
+    router.refresh();
+  }, [router]);
+
   return (
     <div
       style={{

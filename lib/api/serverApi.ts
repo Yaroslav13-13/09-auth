@@ -1,38 +1,12 @@
-import { Note, User } from "./clientApi";
+import { api } from "./api";
+import type { Note } from "@/types/note";
+import type { User } from "@/types/user";
 
-/* ===================== SERVER FETCH ===================== */
-async function serverFetch<T>(
-  url: string,
-  cookieHeader?: string,
-  init: RequestInit = {}
-): Promise<T> {
-  const res = await fetch(url, {
-    ...init,
-    headers: {
-      "Content-Type": "application/json",
-      ...(cookieHeader ? { Cookie: cookieHeader } : {}),
-      ...(init.headers || {}),
-    },
-    credentials: "include",
-  });
-
-  const text = await res.text();
-  let data: unknown;
-  try {
-    data = text ? JSON.parse(text) : null;
-  } catch {
-    data = text;
-  }
-
-  if (!res.ok) {
-    const message =
-      typeof data === "object" && data && "message" in data
-        ? ((data as { message?: string }).message ?? res.statusText)
-        : res.statusText;
-    throw new Error(message);
-  }
-
-  return data as T;
+/* ===================== TYPES ===================== */
+export interface SessionResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
 }
 
 /* ===================== NOTES ===================== */
@@ -45,26 +19,40 @@ export async function fetchNotesServer(
   if (params?.perPage) qs.set("perPage", String(params.perPage));
   if (params?.search) qs.set("search", params.search);
   if (params?.tag) qs.set("tag", params.tag);
-  return serverFetch<Note[]>(`/api/notes?${qs.toString()}`, cookieHeader);
+
+  const { data } = await api.get<Note[]>(`/notes?${qs.toString()}`, {
+    headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+  });
+  return data;
 }
 
 export async function fetchNoteByIdServer(
   id: string,
   cookieHeader?: string
 ): Promise<Note> {
-  return serverFetch<Note>(`/api/notes/${id}`, cookieHeader);
+  const { data } = await api.get<Note>(`/notes/${id}`, {
+    headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+  });
+  return data;
 }
 
 /* ===================== USERS ===================== */
 export async function getMeServer(cookieHeader?: string): Promise<User> {
-  return serverFetch<User>(`/api/users/me`, cookieHeader);
+  const { data } = await api.get<User>(`/users/me`, {
+    headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+  });
+  return data;
 }
 
+/* ===================== AUTH (SESSION) ===================== */
 export async function checkSessionServer(
   cookieHeader?: string
-): Promise<User | null> {
+): Promise<SessionResponse | null> {
   try {
-    return await serverFetch<User>(`/api/auth/session`, cookieHeader);
+    const { data } = await api.get<SessionResponse>(`/auth/session`, {
+      headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+    });
+    return data;
   } catch {
     return null;
   }

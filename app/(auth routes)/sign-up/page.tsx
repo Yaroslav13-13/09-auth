@@ -2,17 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { register } from "@/lib/api/clientApi";
+import { register, getMeClient } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
 import css from "./SignUp.module.css";
-
-interface PayloadError {
-  payload?: {
-    message?: string;
-  };
-}
 
 export default function SignUpPage() {
   const router = useRouter();
+  const { setUser } = useAuthStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,18 +16,23 @@ export default function SignUpPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
+
     try {
       await register(email, password);
+
+      const user = await getMeClient();
+
+      if (user) {
+        setUser({
+          ...user,
+          avatar: user.avatar ?? "",
+        });
+      }
+
       router.push("/profile");
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message || "Registration failed");
-      } else if (typeof err === "object" && err !== null && "payload" in err) {
-        const payloadErr = err as PayloadError;
-        setError(payloadErr.payload?.message || "Registration failed");
-      } else {
-        setError("Registration failed");
-      }
+      if (err instanceof Error) setError(err.message || "Registration failed");
+      else setError("Registration failed");
     }
   };
 
@@ -44,9 +45,8 @@ export default function SignUpPage() {
           <input
             id="email"
             type="email"
-            name="email"
-            className={css.input}
             required
+            className={css.input}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -56,9 +56,8 @@ export default function SignUpPage() {
           <input
             id="password"
             type="password"
-            name="password"
-            className={css.input}
             required
+            className={css.input}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />

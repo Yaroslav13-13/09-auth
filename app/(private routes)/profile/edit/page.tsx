@@ -3,14 +3,15 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { getMeClient, updateMeClient } from "@/lib/api/clientApi";
-import { User } from "@/lib/api/clientApi";
+import { getMeClient, updateMeClient, User } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
 import css from "./EditProfile.module.css";
 import Loader from "@/components/Loader/Loader";
 
 export default function EditProfilePage() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const { setUser } = useAuthStore();
+  const [user, setLocalUser] = useState<User | null>(null);
   const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -19,8 +20,7 @@ export default function EditProfilePage() {
     getMeClient()
       .then((data) => {
         if (data) {
-          // перевіряємо, що data не null
-          setUser(data);
+          setLocalUser(data);
           setUsername(data.username);
         } else {
           setError("User not found");
@@ -32,8 +32,17 @@ export default function EditProfilePage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
     try {
-      await updateMeClient({ username });
+      const updatedUser = await updateMeClient({ username });
+      if (updatedUser) {
+        // оновлюємо глобальний auth-store
+        setUser({
+          ...updatedUser,
+          avatar: updatedUser.avatar ?? "",
+        });
+      }
       router.push("/profile");
     } catch {
       setError("Failed to update username");

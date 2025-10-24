@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchNotes, type NotesResponse } from "@/lib/clientApi";
+import {
+  fetchNotes,
+  fetchNoteById,
+  type NotesResponse,
+} from "@/lib/api/clientApi";
 import NoteList from "@/components/NoteList/NoteList";
 import Loader from "@/components/Loader/Loader";
 import SearchBox from "@/components/SearchBox/SearchBox";
@@ -14,12 +18,13 @@ import css from "@/components/SearchBox/SearchBox.module.css";
 import type { Note, NoteTag } from "@/types/note";
 
 interface NotesClientProps {
-  tag: NoteTag | "All";
+  tag?: NoteTag | "All";
+  id?: string;
 }
 
 type NotificationType = "success" | "error";
 
-const NotesClient: React.FC<NotesClientProps> = ({ tag }) => {
+const NotesClient: React.FC<NotesClientProps> = ({ tag, id }) => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch] = useDebounce(search, 500);
@@ -27,23 +32,27 @@ const NotesClient: React.FC<NotesClientProps> = ({ tag }) => {
   const [notificationType, setNotificationType] =
     useState<NotificationType>("success");
 
+  const isSingleNote = Boolean(id);
   const safeTag: NoteTag | undefined =
-    tag !== "All" ? (tag as NoteTag) : undefined;
+    tag && tag !== "All" ? (tag as NoteTag) : undefined;
 
-  const { data, isLoading, isError } = useQuery<NotesResponse, Error>({
-    queryKey: ["notes", page, safeTag, debouncedSearch],
+  // ---------- FETCH ----------
+  const { data, isLoading, isError } = useQuery<NotesResponse | Note, Error>({
+    queryKey: isSingleNote
+      ? ["note", id]
+      : ["notes", page, safeTag, debouncedSearch],
     queryFn: () =>
-      fetchNotes({
-        page,
-        perPage: 12,
-        search: debouncedSearch || undefined,
-        tag: safeTag,
-      }),
+      isSingleNote
+        ? fetchNoteById(id as string)
+        : fetchNotes({
+            page,
+            perPage: 12,
+            search: debouncedSearch || undefined,
+            tag: safeTag,
+          }),
   });
 
-  const notes: Note[] = data?.notes ?? [];
-  const totalPages: number = data?.totalPages ?? 0;
-
+  // ---------- ЕФЕКТИ ----------
   useEffect(() => setPage(1), [tag, debouncedSearch]);
 
   useEffect(() => {
@@ -53,16 +62,34 @@ const NotesClient: React.FC<NotesClientProps> = ({ tag }) => {
   }, [notification]);
 
   useEffect(() => {
-    if (
-      !isLoading &&
-      !isError &&
-      (debouncedSearch || tag) &&
-      notes.length === 0
-    ) {
-      setNotification("No notes found");
-      setNotificationType("error");
+    if (!isLoading && !isError && (debouncedSearch || tag)) {
+      const notes = (data as NotesResponse)?.notes ?? [];
+      if (!isSingleNote && notes.length === 0) {
+        setNotification("No notes found");
+        setNotificationType("error");
+      }
     }
-  }, [isLoading, isError, notes.length, debouncedSearch, tag]);
+  }, [isLoading, isError, data, debouncedSearch, tag, isSingleNote]);
+
+  // ---------- РЕНДЕР ----------
+  if (isLoading) return <Loader />;
+
+  if (isSingleNote) {
+    const note = data as Note;
+    if (isError || !note)
+      return <p className={css.message}>Note not found or failed to load.</p>;
+
+    return (
+      <div className={css.singleNote}>
+        <h1>{note.title}</h1>
+        {note.content && <p>{note.content}</p>}
+        {note.tag && <p>Tag: {note.tag}</p>}
+      </div>
+    );
+  }
+
+  const notes: Note[] = (data as NotesResponse)?.notes ?? [];
+  const totalPages: number = (data as NotesResponse)?.totalPages ?? 0;
 
   return (
     <div>
@@ -73,7 +100,6 @@ const NotesClient: React.FC<NotesClientProps> = ({ tag }) => {
         </Link>
       </div>
 
-      {isLoading && <Loader />}
       {!isLoading && notes.length > 0 && <NoteList notes={notes} />}
 
       {totalPages > 1 && (
