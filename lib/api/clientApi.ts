@@ -2,14 +2,26 @@ import { api } from "./api";
 import type { Note } from "@/types/note";
 import type { User } from "@/types/user";
 
+/* ===================== TYPES ===================== */
+export interface CreateNotePayload {
+  title: string;
+  content?: string;
+  tag: string;
+}
+
+export interface NotesResponse {
+  notes: Note[];
+  totalPages: number;
+}
+
 /* ===================== NOTES ===================== */
 export const fetchNotes = async (params?: {
   page?: number;
   perPage?: number;
   search?: string;
   tag?: string;
-}): Promise<Note[]> => {
-  const { data } = await api.get<Note[]>("/notes", { params });
+}): Promise<NotesResponse> => {
+  const { data } = await api.get<NotesResponse>("/notes", { params });
   return data;
 };
 
@@ -18,11 +30,7 @@ export const fetchNoteById = async (id: string): Promise<Note> => {
   return data;
 };
 
-export const createNote = async (payload: {
-  title: string;
-  content?: string;
-  tag: string;
-}): Promise<Note> => {
+export const createNote = async (payload: CreateNotePayload): Promise<Note> => {
   const { data } = await api.post<Note>("/notes", payload);
   return data;
 };
@@ -66,3 +74,6 @@ export const updateMeClient = async (payload: Partial<User>): Promise<User> => {
   const { data } = await api.patch<User>("/users/me", payload);
   return data;
 };
+
+export type { User } from "@/types/user";
+export type { Note } from "@/types/note";

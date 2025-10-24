@@ -52,7 +52,7 @@ export default async function FilteredNotesPage({
           perPage: 12,
           tag: tag !== "All" ? tag : undefined,
         },
-        undefined // тут можна передати cookieHeader якщо потрібно
+        undefined
       ),
   });
 
