@@ -1,30 +1,42 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import type { Metadata } from "next";
 import Image from "next/image";
-import { getMe } from "@/lib/api/clientApi";
-import { User } from "@/lib/api/clientApi";
+import Link from "next/link";
+import { getMeServer } from "@/lib/api/serverApi";
 import css from "../../Profile.module.css";
-import Loader from "@/components/Loader/Loader";
 
-export default function ProfilePage() {
-  const [user, setUser] = useState<User | null>(null);
+export const metadata: Metadata = {
+  title: "Profile | NoteHub",
+  description: "User profile page in NoteHub app",
+};
 
-  useEffect(() => {
-    getMe().then(setUser).catch(console.error);
-  }, []);
+export default async function ProfilePage() {
+  const user = await getMeServer();
 
-  if (!user) return <Loader />;
+  if (!user) {
+    return (
+      <main className={css.mainContent}>
+        <div className={css.profileCard}>
+          <h1 className={css.formTitle}>Profile Page</h1>
+          <p>User not found or unauthorized.</p>
+          <Link href="/sign-in" className={css.editProfileButton}>
+            Go to Sign In
+          </Link>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className={css.mainContent}>
       <div className={css.profileCard}>
         <div className={css.header}>
           <h1 className={css.formTitle}>Profile Page</h1>
-          <a href="/profile/edit" className={css.editProfileButton}>
+
+          <Link href="/profile/edit" className={css.editProfileButton}>
             Edit Profile
-          </a>
+          </Link>
         </div>
+
         <div className={css.avatarWrapper}>
           {user.avatar && (
             <Image
@@ -37,9 +49,14 @@ export default function ProfilePage() {
             />
           )}
         </div>
+
         <div className={css.profileInfo}>
-          <p>Username: {user.username}</p>
-          <p>Email: {user.email}</p>
+          <p>
+            <strong>Username:</strong> {user.username}
+          </p>
+          <p>
+            <strong>Email:</strong> {user.email}
+          </p>
         </div>
       </div>
     </main>

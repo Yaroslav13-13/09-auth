@@ -22,7 +22,6 @@ export default function SignInPage() {
       const user = await login({ email, password });
       setUser(user);
 
-      // оновлюємо cookies і редіректимо
       router.refresh();
       router.push("/profile");
     } catch {
