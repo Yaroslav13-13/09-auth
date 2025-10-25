@@ -2,9 +2,9 @@ import axios from "axios";
 
 const baseURL =
   process.env.NODE_ENV === "development"
-    ? "/api" // ✅ локально піде через проксі (rewrites)
+    ? "/api"
     : process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-      "https://notehub-api.goit.study"; // ✅ на Vercel
+      "https://notehub-api.goit.study";
 
 export const api = axios.create({
   baseURL,

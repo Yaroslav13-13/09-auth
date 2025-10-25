@@ -17,7 +17,6 @@ export default function EditProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // 🔹 Завантаження поточного користувача
   useEffect(() => {
     getMe()
       .then((data) => {
@@ -32,7 +31,6 @@ export default function EditProfilePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // 🔹 Збереження змін
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -44,7 +42,6 @@ export default function EditProfilePage() {
       });
 
       if (updatedUser) {
-        // оновлюємо глобальний auth-store
         setUser({
           ...updatedUser,
           avatar: updatedUser.avatar ?? "",

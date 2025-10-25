@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { logout } from "@/lib/api/clientApi"; // ✅ правильний logout із API
+import { logout } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import css from "./AuthNavigation.module.css";
 
@@ -12,9 +12,9 @@ export default function AuthNavigation() {
 
   const handleLogout = async () => {
     try {
-      await logout(); // виклик до API
-      clearIsAuthenticated(); // очищення стану у Zustand
-      router.push("/sign-in"); // редірект
+      await logout();
+      clearIsAuthenticated();
+      router.push("/sign-in");
     } catch (err) {
       console.error("Logout failed:", err);
     }

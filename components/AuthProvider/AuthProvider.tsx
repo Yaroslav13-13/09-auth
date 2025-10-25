@@ -6,11 +6,6 @@ import { checkSession, getMe } from "@/lib/api/clientApi";
 import Loader from "@/components/Loader/Loader";
 import type { User } from "@/types/user";
 
-/**
- * AuthProvider — глобальний компонент, який перевіряє,
- * чи користувач авторизований і зберігає його у Zustand.
- * Показує Loader під час перевірки.
- */
 export default function AuthProvider({
   children,
 }: {
@@ -22,11 +17,9 @@ export default function AuthProvider({
   useEffect(() => {
     const verifySession = async () => {
       try {
-        // 🔹 1. Перевіряємо чи є активна сесія (куки токенів)
         const isValid = await checkSession();
 
         if (isValid) {
-          // 🔹 2. Якщо сесія дійсна — отримуємо дані користувача
           const user: User = await getMe();
 
           setUser({
@@ -34,7 +27,6 @@ export default function AuthProvider({
             avatar: user.avatar ?? "",
           });
         } else {
-          // 🔸 Якщо сесії немає — очищаємо стан
           clearIsAuthenticated();
         }
       } catch (error) {
@@ -48,7 +40,6 @@ export default function AuthProvider({
     verifySession();
   }, [setUser, clearIsAuthenticated]);
 
-  // 🔹 Loader під час перевірки
   if (isChecking) {
     return (
       <div
@@ -64,6 +55,5 @@ export default function AuthProvider({
     );
   }
 
-  // 🔹 Повертаємо дітей після успішної перевірки
   return <>{children}</>;
 }

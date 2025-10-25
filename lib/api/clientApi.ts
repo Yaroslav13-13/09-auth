@@ -66,14 +66,14 @@ export const register = async (body: RegisterRequest): Promise<User> => {
 
 export const login = async (body: LoginRequest): Promise<User> => {
   const { data } = await api.post<User>("/auth/login", body, {
-    withCredentials: true, // 🔹 обов’язково
+    withCredentials: true,
   });
   return data;
 };
 
 export const logout = async (): Promise<void> => {
   await api.post("/auth/logout", null, {
-    withCredentials: true, // 🔹 щоб очистились куки
+    withCredentials: true,
   });
 };
 

@@ -3,6 +3,16 @@
 // const nextConfig: NextConfig = {
 //   reactStrictMode: true,
 //   swcMinify: true,
+
+//   async rewrites() {
+//     return [
+//       {
+//         source: "/api/:path*",
+//         destination: "https://notehub-api.goit.study/:path*",
+//       },
+//     ];
+//   },
+
 //   images: {
 //     remotePatterns: [
 //       {
@@ -20,17 +30,6 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-
-  // 🔹 Проксі для локальної розробки
-  async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: "https://notehub-api.goit.study/:path*",
-      },
-    ];
-  },
-
   images: {
     remotePatterns: [
       {
@@ -38,6 +37,14 @@ const nextConfig: NextConfig = {
         hostname: "ac.goit.global",
       },
     ],
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "https://notehub-api.goit.study/api/:path*", // ✅ проксі
+      },
+    ];
   },
 };
 

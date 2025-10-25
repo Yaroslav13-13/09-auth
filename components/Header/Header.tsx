@@ -13,10 +13,7 @@ export default function Header() {
   const isNotesActive = pathname.startsWith("/notes");
   const { user, isAuthenticated } = useAuthStore();
 
-  // 🔹 Ніяких повторних getMeClient — це вже робить AuthProvider
-  useEffect(() => {
-    // Можна залишити пустим — просто щоб не випадково зловити warning
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <header className={css.header}>
@@ -36,7 +33,6 @@ export default function Header() {
             <TagsMenu isActive={isNotesActive} />
           </li>
 
-          {/* 🔹 Профіль показуємо лише якщо користувач авторизований */}
           {isAuthenticated && user && (
             <li>
               <Link
