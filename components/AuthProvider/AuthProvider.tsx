@@ -1,72 +1,69 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import Loader from "@/components/Loader/Loader";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/lib/store/authStore";
-import {
-  checkSession,
-  getMeClient,
-  type User as ApiUser,
-} from "@/lib/api/clientApi";
+import { checkSession, getMe } from "@/lib/api/clientApi";
+import Loader from "@/components/Loader/Loader";
 import type { User } from "@/types/user";
 
-function mapApiUserToUser(apiUser: ApiUser): User {
-  return {
-    username: apiUser.username,
-    email: apiUser.email,
-    avatar: apiUser.avatar ?? "",
-  };
-}
-
+/**
+ * AuthProvider — глобальний компонент, який перевіряє,
+ * чи користувач авторизований і зберігає його у Zustand.
+ * Показує Loader під час перевірки.
+ */
 export default function AuthProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [checking, setChecking] = useState(true);
-  const setUser = useAuthStore((s) => s.setUser);
-  const clearAuth = useAuthStore((s) => s.clearIsAuthenticated);
+  const { setUser, clearIsAuthenticated } = useAuthStore();
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
-
-    const checkAuth = async () => {
+    const verifySession = async () => {
       try {
-        const session = await checkSession();
+        // 🔹 1. Перевіряємо чи є активна сесія (куки токенів)
+        const isValid = await checkSession();
 
-        if (session && (session as { success?: boolean }).success) {
-          const meFromApi = await getMeClient();
-          if (meFromApi && mounted) {
-            setUser(mapApiUserToUser(meFromApi));
-          }
-        } else if (session && (session as { email?: string }).email) {
-          if (mounted) {
-            const partialUser: User = {
-              username:
-                (session as { username?: string }).username ?? "Unknown",
-              email: (session as { email: string }).email,
-              avatar: "",
-            };
-            setUser(partialUser);
-          }
+        if (isValid) {
+          // 🔹 2. Якщо сесія дійсна — отримуємо дані користувача
+          const user: User = await getMe();
+
+          setUser({
+            ...user,
+            avatar: user.avatar ?? "",
+          });
         } else {
-          clearAuth();
+          // 🔸 Якщо сесії немає — очищаємо стан
+          clearIsAuthenticated();
         }
-      } catch {
-        clearAuth();
+      } catch (error) {
+        console.error("AuthProvider verifySession error:", error);
+        clearIsAuthenticated();
       } finally {
-        if (mounted) setChecking(false);
+        setIsChecking(false);
       }
     };
 
-    checkAuth();
+    verifySession();
+  }, [setUser, clearIsAuthenticated]);
 
-    return () => {
-      mounted = false;
-    };
-  }, [setUser, clearAuth]);
+  // 🔹 Loader під час перевірки
+  if (isChecking) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <Loader />
+      </div>
+    );
+  }
 
-  if (checking) return <Loader />;
-
+  // 🔹 Повертаємо дітей після успішної перевірки
   return <>{children}</>;
 }

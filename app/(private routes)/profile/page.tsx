@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { getMeClient } from "@/lib/api/clientApi";
+import { getMe } from "@/lib/api/clientApi";
 import { User } from "@/lib/api/clientApi";
 import css from "../../Profile.module.css";
 import Loader from "@/components/Loader/Loader";
@@ -11,7 +11,7 @@ export default function ProfilePage() {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    getMeClient().then(setUser).catch(console.error);
+    getMe().then(setUser).catch(console.error);
   }, []);
 
   if (!user) return <Loader />;
