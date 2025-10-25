@@ -44,12 +44,7 @@ export default async function FilteredNotesPage({
 
   await queryClient.prefetchQuery({
     queryKey: ["notes", 1, tag !== "All" ? tag : undefined],
-    queryFn: () =>
-      fetchNotesServer({
-        search: "",
-        page: 1,
-        tag: tag !== "All" ? tag : undefined,
-      }),
+    queryFn: () => fetchNotesServer("", 1, tag !== "All" ? tag : undefined),
   });
 
   const dehydratedState = dehydrate(queryClient);
