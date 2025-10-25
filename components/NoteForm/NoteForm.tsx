@@ -66,7 +66,7 @@ export default function NoteForm({ onCancel }: NoteFormProps) {
     const payload: CreateNotePayload = {
       title: form.title.trim(),
       content: form.content?.trim() || "",
-      tag: form.tag,
+      tag: form.tag as NoteTag,
     };
 
     mutation.mutate(payload);
