@@ -1,17 +1,36 @@
 import { api } from "./api";
-import type { Note } from "@/types/note";
+import type { Note, NoteTag } from "@/types/note";
 import type { User } from "@/types/user";
 
 /* ===================== TYPES ===================== */
-export interface CreateNotePayload {
-  title: string;
-  content?: string;
-  tag: string;
-}
-
 export interface NotesResponse {
   notes: Note[];
   totalPages: number;
+}
+
+export interface CreateNotePayload {
+  title: string;
+  content?: string;
+  tag: NoteTag;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface UpdateMeRequest {
+  email: string;
+  username: string;
+}
+
+interface CheckSessionResponse {
+  success: boolean;
 }
 
 /* ===================== NOTES ===================== */
@@ -35,43 +54,53 @@ export const createNote = async (payload: CreateNotePayload): Promise<Note> => {
   return data;
 };
 
-export const deleteNote = async (id: string): Promise<{ message: string }> => {
-  const { data } = await api.delete<{ message: string }>(`/notes/${id}`);
-  return data;
+export const deleteNote = async (id: string): Promise<void> => {
+  await api.delete(`/notes/${id}`);
 };
 
 /* ===================== AUTH ===================== */
-export const register = async (
-  email: string,
-  password: string
-): Promise<User> => {
-  const { data } = await api.post<User>("/auth/register", { email, password });
+export const register = async (body: RegisterRequest): Promise<User> => {
+  const { data } = await api.post<User>("/auth/register", body);
   return data;
 };
 
-export const login = async (email: string, password: string): Promise<User> => {
-  const { data } = await api.post<User>("/auth/login", { email, password });
+export const login = async (body: LoginRequest): Promise<User> => {
+  const { data } = await api.post<User>("/auth/login", body, {
+    withCredentials: true,
+  });
   return data;
 };
 
-export const logout = async (): Promise<{ message: string }> => {
-  const { data } = await api.post<{ message: string }>("/auth/logout");
-  return data;
+export const logout = async (): Promise<void> => {
+  await api.post("/auth/logout", null, {
+    withCredentials: true,
+  });
 };
 
-export const checkSession = async (): Promise<User> => {
-  const { data } = await api.get<User>("/auth/session");
-  return data;
+export const checkSession = async (): Promise<boolean> => {
+  try {
+    const { data } = await api.get<CheckSessionResponse>("/auth/session", {
+      withCredentials: true,
+    });
+    return data.success;
+  } catch (err) {
+    console.error("checkSession error:", err);
+    return false;
+  }
 };
 
 /* ===================== USERS ===================== */
-export const getMeClient = async (): Promise<User> => {
-  const { data } = await api.get<User>("/users/me");
+export const getMe = async (): Promise<User> => {
+  const { data } = await api.get<User>("/users/me", {
+    withCredentials: true,
+  });
   return data;
 };
 
-export const updateMeClient = async (payload: Partial<User>): Promise<User> => {
-  const { data } = await api.patch<User>("/users/me", payload);
+export const updateMe = async (body: UpdateMeRequest): Promise<User> => {
+  const { data } = await api.patch<User>("/users/me", body, {
+    withCredentials: true,
+  });
   return data;
 };
 

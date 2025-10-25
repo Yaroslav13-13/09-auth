@@ -1,59 +1,67 @@
-import { api } from "./api";
+import axios from "axios";
+import { cookies } from "next/headers";
+import type { AxiosResponse } from "axios";
 import type { Note } from "@/types/note";
 import type { User } from "@/types/user";
+import type { NotesResponse } from "./clientApi";
 
-/* ===================== TYPES ===================== */
-export interface SessionResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
-}
-
-/* ===================== NOTES ===================== */
-export async function fetchNotesServer(
-  params?: { page?: number; perPage?: number; search?: string; tag?: string },
-  cookieHeader?: string
-): Promise<Note[]> {
-  const qs = new URLSearchParams();
-  if (params?.page) qs.set("page", String(params.page));
-  if (params?.perPage) qs.set("perPage", String(params.perPage));
-  if (params?.search) qs.set("search", params.search);
-  if (params?.tag) qs.set("tag", params.tag);
-
-  const { data } = await api.get<Note[]>(`/notes?${qs.toString()}`, {
-    headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
-  });
-  return data;
-}
-
-export async function fetchNoteByIdServer(
-  id: string,
-  cookieHeader?: string
-): Promise<Note> {
-  const { data } = await api.get<Note>(`/notes/${id}`, {
-    headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
-  });
-  return data;
-}
+/* ===================== SERVER API INSTANCE ===================== */
+const serverApi = axios.create({
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
+    "https://notehub-api.goit.study",
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 /* ===================== USERS ===================== */
-export async function getMeServer(cookieHeader?: string): Promise<User> {
-  const { data } = await api.get<User>(`/users/me`, {
-    headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
+export const getMeServer = async (): Promise<User> => {
+  const cookieStore = await cookies();
+
+  const res = await serverApi.get<User>("/users/me", {
+    headers: { Cookie: cookieStore.toString() },
   });
-  return data;
-}
+  return res.data;
+};
 
 /* ===================== AUTH (SESSION) ===================== */
-export async function checkSessionServer(
-  cookieHeader?: string
-): Promise<SessionResponse | null> {
-  try {
-    const { data } = await api.get<SessionResponse>(`/auth/session`, {
-      headers: cookieHeader ? { Cookie: cookieHeader } : undefined,
-    });
-    return data;
-  } catch {
-    return null;
-  }
-}
+export const checkSessionServer = async (): Promise<
+  AxiosResponse<{ user: User }>
+> => {
+  const cookieStore = await cookies();
+
+  const res = await serverApi.get("/auth/session", {
+    headers: { Cookie: cookieStore.toString() },
+  });
+  return res;
+};
+
+/* ===================== NOTES ===================== */
+export const fetchNotesServer = async ({
+  search,
+  page,
+  tag,
+}: {
+  search: string;
+  page: number;
+  tag?: string;
+}): Promise<NotesResponse> => {
+  const cookieStore = await cookies();
+
+  const res = await serverApi.get<NotesResponse>("/notes", {
+    params: { search, page, tag },
+    headers: { Cookie: cookieStore.toString() },
+  });
+  return res.data;
+};
+
+export const fetchNoteByIdServer = async (id: string): Promise<Note> => {
+  const cookieStore = await cookies();
+
+  const res = await serverApi.get<Note>(`/notes/${id}`, {
+    headers: { Cookie: cookieStore.toString() },
+  });
+  return res.data;
+};

@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/api/:path*",
+        destination: "https://notehub-api.goit.study/api/:path*", // ✅ проксі
+      },
+    ];
+  },
 };
 
 export default nextConfig;

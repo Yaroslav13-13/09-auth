@@ -1,22 +1,16 @@
 import { create } from "zustand";
-import { User } from "../../types/user";
-import { logout as apiLogout } from "../../lib/api/clientApi";
+import type { User } from "@/types/user";
 
 interface AuthStore {
-  user: User | null;
   isAuthenticated: boolean;
+  user: User | null;
   setUser: (user: User) => void;
   clearIsAuthenticated: () => void;
-  logout: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>()((set) => ({
-  user: null,
   isAuthenticated: false,
-  setUser: (user: User) => set({ user, isAuthenticated: true }),
+  user: null,
+  setUser: (user) => set({ user, isAuthenticated: true }),
   clearIsAuthenticated: () => set({ user: null, isAuthenticated: false }),
-  logout: async () => {
-    await apiLogout();
-    set({ user: null, isAuthenticated: false });
-  },
 }));

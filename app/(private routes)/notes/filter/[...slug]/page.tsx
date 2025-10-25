@@ -42,18 +42,14 @@ export default async function FilteredNotesPage({
   const tag = (resolvedParams.slug?.[0] ?? "All") as NoteTag | "All";
   const queryClient = getQueryClient();
 
-  // Використовуємо fetchNotesServer замість fetchNotes
   await queryClient.prefetchQuery({
     queryKey: ["notes", 1, tag !== "All" ? tag : undefined],
     queryFn: () =>
-      fetchNotesServer(
-        {
-          page: 1,
-          perPage: 12,
-          tag: tag !== "All" ? tag : undefined,
-        },
-        undefined
-      ),
+      fetchNotesServer({
+        search: "",
+        page: 1,
+        tag: tag !== "All" ? tag : undefined,
+      }),
   });
 
   const dehydratedState = dehydrate(queryClient);

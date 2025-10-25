@@ -1,33 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import TagsMenu from "../TagsMenu/TagsMenu";
 import AuthNavigation from "../AuthNavigation/AuthNavigation";
-import { useAuthStore } from "../../lib/store/authStore";
-import { getMeClient } from "../../lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
 import css from "./Header.module.css";
 
 export default function Header() {
   const pathname = usePathname();
   const isNotesActive = pathname.startsWith("/notes");
-  const { user, isAuthenticated, setUser } = useAuthStore();
-  const [loading, setLoading] = useState(true);
+  const { user, isAuthenticated } = useAuthStore();
 
-  useEffect(() => {
-    if (!isAuthenticated && !user) {
-      getMeClient()
-        .then((me) => {
-          if (me) setUser(me);
-        })
-        .finally(() => setLoading(false));
-    } else {
-      setLoading(false);
-    }
-  }, [isAuthenticated, user, setUser]);
-
-  if (loading) return null;
+  useEffect(() => {}, []);
 
   return (
     <header className={css.header}>
@@ -42,17 +28,21 @@ export default function Header() {
               Home
             </Link>
           </li>
+
           <li className={css.navItemWithDropdown}>
             <TagsMenu isActive={isNotesActive} />
           </li>
-          <li>
-            <Link
-              href="/profile"
-              className={pathname === "/profile" ? css.active : ""}
-            >
-              Profile
-            </Link>
-          </li>
+
+          {isAuthenticated && user && (
+            <li>
+              <Link
+                href="/profile"
+                className={pathname === "/profile" ? css.active : ""}
+              >
+                Profile
+              </Link>
+            </li>
+          )}
         </ul>
       </nav>
 

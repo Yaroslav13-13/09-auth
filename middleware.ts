@@ -1,64 +1,35 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { checkSessionServer } from "@/lib/api/serverApi";
+import { NextRequest, NextResponse } from "next/server";
 
-const publicAuthPages = ["/sign-in", "/sign-up", "/signin", "/signup"];
-const privatePrefixes = ["/notes", "/profile"];
+const privateRoutes = ["/profile", "/notes"];
 
-export async function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+const authRoutes = ["/sign-in", "/sign-up"];
 
-  // eslint-disable-next-line prefer-const
-  let accessToken = req.cookies.get("accessToken")?.value;
-  const refreshToken = req.cookies.get("refreshToken")?.value;
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-  if (!accessToken && refreshToken) {
-    try {
-      const newTokens = await checkSessionServer(
-        `refreshToken=${refreshToken}`
-      );
+  const accessToken = request.cookies.get("accessToken")?.value;
+  const refreshToken = request.cookies.get("refreshToken")?.value;
 
-      if (newTokens?.accessToken && newTokens?.refreshToken) {
-        const res = NextResponse.next();
-        res.cookies.set("accessToken", newTokens.accessToken, {
-          httpOnly: true,
-        });
-        res.cookies.set("refreshToken", newTokens.refreshToken, {
-          httpOnly: true,
-        });
-        return res;
-      }
-    } catch {
-      const res = NextResponse.next();
-      res.cookies.delete("accessToken");
-      res.cookies.delete("refreshToken");
-      return res;
-    }
+  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  const isPrivateRoute = privateRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
+
+  if (isAuthRoute && (accessToken || refreshToken)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/profile";
+    return NextResponse.redirect(url);
   }
 
-  const hasToken = Boolean(accessToken || refreshToken);
-
-  if (publicAuthPages.some((p) => pathname.startsWith(p))) {
-    if (hasToken) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/profile";
-      return NextResponse.redirect(url);
-    }
-    return NextResponse.next();
-  }
-
-  if (privatePrefixes.some((p) => pathname.startsWith(p))) {
-    if (!hasToken) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/sign-in";
-      url.searchParams.set("from", pathname);
-      return NextResponse.redirect(url);
-    }
+  if (!accessToken && !refreshToken && isPrivateRoute) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/sign-in";
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/notes/:path*", "/profile/:path*", "/sign-in", "/sign-up"],
+  matcher: ["/profile/:path*", "/notes/:path*", "/sign-in", "/sign-up"],
 };

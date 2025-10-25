@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { register, getMeClient } from "@/lib/api/clientApi";
+import { register, getMe } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import css from "./SignUp.module.css";
 
@@ -18,9 +18,9 @@ export default function SignUpPage() {
     setError("");
 
     try {
-      await register(email, password);
+      await register({ email, password });
 
-      const user = await getMeClient();
+      const user = await getMe();
 
       if (user) {
         setUser({
@@ -44,6 +44,7 @@ export default function SignUpPage() {
           <label htmlFor="email">Email</label>
           <input
             id="email"
+            name="email"
             type="email"
             required
             className={css.input}
@@ -55,6 +56,7 @@ export default function SignUpPage() {
           <label htmlFor="password">Password</label>
           <input
             id="password"
+            name="password"
             type="password"
             required
             className={css.input}

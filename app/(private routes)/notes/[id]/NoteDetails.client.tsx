@@ -10,10 +10,10 @@ import { FiTag, FiCalendar, FiX } from "react-icons/fi";
 import css from "./NoteDetails.module.css";
 
 interface NoteDetailsClientProps {
-  noteId: string;
+  id: string;
 }
 
-const NoteDetailsClient: React.FC<NoteDetailsClientProps> = ({ noteId }) => {
+const NoteDetailsClient: React.FC<NoteDetailsClientProps> = ({ id }) => {
   const router = useRouter();
 
   const {
@@ -21,8 +21,8 @@ const NoteDetailsClient: React.FC<NoteDetailsClientProps> = ({ noteId }) => {
     isLoading,
     isError,
   } = useQuery<Note, Error>({
-    queryKey: ["note", noteId],
-    queryFn: () => fetchNoteById(noteId),
+    queryKey: ["note", id],
+    queryFn: () => fetchNoteById(id),
     refetchOnMount: false,
   });
 
