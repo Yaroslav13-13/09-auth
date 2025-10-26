@@ -25,7 +25,6 @@ export interface LoginRequest {
 }
 
 export interface UpdateMeRequest {
-  email: string;
   username: string;
 }
 
