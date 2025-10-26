@@ -37,7 +37,6 @@ export default function EditProfilePage() {
 
     try {
       const updatedUser = await updateMe({
-        email: user?.email ?? "",
         username,
       });
 
