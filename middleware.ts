@@ -10,22 +10,25 @@ export async function middleware(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value;
   const refreshToken = req.cookies.get("refreshToken")?.value;
 
-  if (accessToken && authRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL("/notes", req.url));
+  if (accessToken && authRoutes.some((route) => pathname.startsWith(route))) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   if (!accessToken && refreshToken) {
     try {
       const res = await checkSessionServer();
+
       if (res?.data?.user) {
         const response = NextResponse.next();
-        if (res.headers["set-cookie"]) {
-          const cookies = res.headers["set-cookie"];
+
+        const cookies = res.headers["set-cookie"];
+        if (cookies) {
           cookies.forEach((cookie: string) => {
             const [name, value] = cookie.split("=");
             response.cookies.set(name.trim(), value.split(";")[0]);
           });
         }
+
         return response;
       }
     } catch (err) {
