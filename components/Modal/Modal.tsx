@@ -9,7 +9,6 @@ interface ModalProps {
 }
 
 export default function Modal({ children, onClose }: ModalProps) {
-  // Закриття модалки по Escape
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -20,10 +19,7 @@ export default function Modal({ children, onClose }: ModalProps) {
 
   return createPortal(
     <div className={css.overlay} onClick={onClose}>
-      <div
-        className={css.modal}
-        onClick={(e) => e.stopPropagation()} // Щоб клік по контенту не закривав
-      >
+      <div className={css.modal} onClick={(e) => e.stopPropagation()}>
         {children}
       </div>
     </div>,
